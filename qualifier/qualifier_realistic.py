@@ -19,10 +19,9 @@ class RestaurantManager:
         already defined a staff dictionary.
         """
         self.staff = {}
-        self.registerWorkers()
 
 
-    async def __call__(self, request: Request):
+    async def __call__(self, r: Request):
         """Handle a request received.
         This is called for each request received by your application.
         In here is where most of the code for your system should go.
@@ -30,17 +29,17 @@ class RestaurantManager:
             Request object containing information about the sent
             request to your application.
         """
-        request = request.scope
+        request = r.scope
         if request["type"] == "staff.onduty":
-            self.staff[request["id"]] = request
+            self.staff[request["id"]] = r
 
         elif request["type"] == "staff.offduty":
             del self.staff[request["id"]]
 
         elif request["type"] == "order":
-            full_order = await request.recieve()
+            full_order = await r.receive()
             speciality_needed = request["speciality"] 
-            for worker in self.staff:
+            for worker in self.staff.values():
                 if speciality_needed in worker.scope["speciality"]:
                     worker = worker
                     break
