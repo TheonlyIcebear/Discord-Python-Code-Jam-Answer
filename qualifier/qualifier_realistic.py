@@ -42,6 +42,9 @@ class RestaurantManager:
             speciality_needed = request["speciality"] 
             for worker in self.staff:
                 if speciality_needed in worker.scope["speciality"]:
-                    selected_worker = worker
+                    worker = worker
                     break
-            selected_worker.send(full_order)
+            await worker.send(full_order)
+
+            result = await worker.receive()
+            await r.send(result)
